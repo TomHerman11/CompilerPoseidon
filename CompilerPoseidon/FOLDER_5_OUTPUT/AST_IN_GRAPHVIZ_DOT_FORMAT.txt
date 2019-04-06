@@ -1,0 +1,159 @@
+digraph
+{
+graph [ordering = "out"]
+v14 [label = "classDec_simple
+V"];
+v15 [label = "classdec
+"];
+v15 -> v14;
+v16 [label = "NEWEXP
+(V)"];
+v17 [label = "VARDEC NEWEXP
+(V)
+(v)"];
+v17 -> v16;
+v18 [label = "STMT VARDEC
+"];
+v18 -> v17;
+v19 [label = "SIMPLE
+VAR
+(v)"];
+v20 [label = "FIELD
+VAR
+...->c"];
+v20 -> v19;
+v21 [label = "EXP
+VAR"];
+v21 -> v20;
+v22 [label = "STMT
+LIST
+"];
+v22 -> v21;
+v23 -> v22;
+v23 [label = "STMT PARAM FUNC
+(PrintString)"];
+v24 [label = "SIMPLE
+VAR
+(v)"];
+v25 [label = "STMT VAR EMPTY FUNC
+(init)"];
+v25 -> v24;
+v26 [label = "Exp Stirng
+ss"];
+v27 [label = "SIMPLE
+VAR
+(v)"];
+v28 [label = "FIELD
+VAR
+...->c"];
+v28 -> v27;
+v29 [label = "EXP
+VAR"];
+v29 -> v28;
+v30 [label = "BINOP(=)"];
+v30 -> v26;
+v30 -> v29;
+v31 [label = "SIMPLE
+VAR
+(v)"];
+v32 [label = "FIELD
+VAR
+...->c"];
+v32 -> v31;
+v33 [label = "EXP
+VAR"];
+v33 -> v32;
+v34 [label = "Exp Stirng
+ss"];
+v35 [label = "BINOP(+)"];
+v35 -> v33;
+v35 -> v34;
+v36 [label = "STMT
+LIST
+"];
+v36 -> v35;
+v37 -> v36;
+v37 [label = "STMT PARAM FUNC
+(PrintString)"];
+v38 [label = "STMT
+LIST
+"];
+v38 -> v37;
+v39 [label = "IF STMT
+"];
+v39 -> v30;
+v39 -> v38;
+v40 [label = "Exp Stirng
+something"];
+v41 [label = "SIMPLE
+VAR
+(v)"];
+v42 [label = "FIELD
+VAR
+...->c"];
+v42 -> v41;
+v43 [label = "EXP
+VAR"];
+v43 -> v42;
+v44 [label = "BINOP(=)"];
+v44 -> v40;
+v44 -> v43;
+v45 [label = "Exp Stirng
+google"];
+v46 [label = "STMT
+LIST
+"];
+v46 -> v45;
+v47 -> v46;
+v47 [label = "STMT PARAM FUNC
+(PrintString)"];
+v48 [label = "STMT
+LIST
+"];
+v48 -> v47;
+v49 [label = "IF STMT
+"];
+v49 -> v44;
+v49 -> v48;
+v50 [label = "STMT
+LIST
+"];
+v50 -> v49;
+v51 [label = "STMT
+LIST
+"];
+v51 -> v39;
+v51 -> v50;
+v52 [label = "STMT
+LIST
+"];
+v52 -> v25;
+v52 -> v51;
+v53 [label = "STMT
+LIST
+"];
+v53 -> v23;
+v53 -> v52;
+v54 [label = "STMT
+LIST
+"];
+v54 -> v18;
+v54 -> v53;
+v56 [label = "SIMPLE FUNCDEC
+()(void) (main)"];
+v56 -> v54;
+v57 [label = "funcdec
+"];
+v57 -> v56;
+v58 [label = "DEC
+LIST
+"];
+v58 -> v57;
+v59 [label = "DEC
+LIST
+"];
+v59 -> v15;
+v59 -> v58;
+v60 [label = "PROGRAM"];
+v60 -> v59;
+}

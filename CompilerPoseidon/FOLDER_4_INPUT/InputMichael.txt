@@ -1,0 +1,95 @@
+class c {
+	int b := 5;
+	int q;
+	int foo() { return 5; } 
+	int bar() {return 6;}
+}
+
+class b extends c {
+	int bar() { return 7; }
+	void pttrace() {PrintTrace();}
+}
+array intarr = int[]
+array carr = c[]
+
+void pttest1() {
+	b x := new b;
+	x.pttrace();
+}
+
+void polytest() {
+	c k := new c;
+	c n := new b;
+ 	PrintInt(k.foo());
+ 	PrintInt(k.bar());
+ 	PrintInt(n.foo());
+ 	PrintInt(n.bar());
+}
+
+void pttest() {
+	pttest1();
+}
+
+void stringtest() {
+	string s1 := "abcd";
+	PrintString(s1);
+	string s2 := "stringfromvar";
+	PrintString(s1 + s2);
+	PrintString(s1 + "adHocstring");
+}
+
+void testExitNulldiv() {
+	int x := 0;
+	int y := 1/x;
+	PrintInt(y);
+}
+
+void testExitNullderef() {
+	c x := nil;
+
+	int ddd := x.foo();
+	if( x.b ) {
+		x.b := ddd;
+	}
+	
+}
+
+void testExitOob() {
+	intarr x := new int[5];
+	PrintInt(x[6]);
+}
+
+void testArrayAccess() {
+	intarr x := new int[2];
+	x[1] := 2;
+	x[0] := 3;
+	PrintInt(x[1]);
+	PrintInt(x[0]);
+
+	carr y:=new c[2];
+	y[0] := new c;
+	y[1] := new b;
+	PrintInt(y[1].bar() + y[0].bar());
+}
+void main()
+{
+	
+	int i := 777;
+	int j := 888;
+	
+	
+	
+	polytest();
+	return;
+	stringtest();
+	pttest();
+	
+	testExitNulldiv();
+	testExitNullderef();
+	testExitOob();
+	while (i) {
+		PrintInt(i);
+		i := i / 10;
+	}
+	testArrayAccess();
+}

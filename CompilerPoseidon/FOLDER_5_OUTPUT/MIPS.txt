@@ -1,0 +1,364 @@
+.data
+
+crt_global_DivideByZero_error_string:	.asciiz "Division By Zero"
+crt_global_NilDeref_error_string:	.asciiz "Invalid Pointer Dereference"
+crt_global_OutOfBoundsAccess_error_string:	.asciiz "Access Violation"
+_crt_funcname_IsPrime:	.asciiz "IsPrime"
+_crt_funcname_PrintPrimes:	.asciiz "PrintPrimes"
+_crt_funcname__main:	.asciiz "_main"
+.text
+main:
+	move $fp, $zero
+	jal _main
+
+	li $v0,10
+	syscall
+	jr $ra
+
+IsPrime:
+	la $t0, _crt_funcname_IsPrime
+	sub $sp,$sp,4
+	sw $t0,0($sp)
+	sub $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp, $sp
+	sub $sp,$sp,8
+	li $t0,2
+	sw $t0,-4($fp)
+	li $t0,2
+	sw $t0,-8($fp)
+Label_0_check:
+	lw $t1,-4($fp)
+	move $t0, $a0
+	slt $t0,$t1,$t0
+	li $t1,32767
+	bge $t1,$t0,Label_2_overflow
+
+	li $t0,32767
+	j Label_3_end
+
+Label_2_overflow:
+	li $t1,65535
+	ble $t0,$t1,Label_3_end
+
+	li $t0,65535
+Label_3_end:
+	beq $t0,$zero,Label_1_end
+
+	li $t0,2
+	sw $t0,-8($fp)
+Label_4_check:
+	lw $t0,-8($fp)
+	move $t1, $a0
+	slt $t1,$t0,$t1
+	li $t0,32767
+	bge $t0,$t1,Label_6_overflow
+
+	li $t1,32767
+	j Label_7_end
+
+Label_6_overflow:
+	li $t0,65535
+	ble $t1,$t0,Label_7_end
+
+	li $t1,65535
+Label_7_end:
+	beq $t1,$zero,Label_5_end
+
+	lw $t1,-4($fp)
+	lw $t0,-8($fp)
+	mul $t0,$t1,$t0
+	li $t1,32767
+	bge $t1,$t0,Label_9_overflow
+
+	li $t0,32767
+	j Label_10_end
+
+Label_9_overflow:
+	li $t1,65535
+	ble $t0,$t1,Label_10_end
+
+	li $t0,65535
+Label_10_end:
+	move $t1, $a0
+	seq $t0,$t0,$t1
+	li $t1,32767
+	bge $t1,$t0,Label_11_overflow
+
+	li $t0,32767
+	j Label_12_end
+
+Label_11_overflow:
+	li $t1,65535
+	ble $t0,$t1,Label_12_end
+
+	li $t0,65535
+Label_12_end:
+	beq $t0,$zero,Label_8_end
+
+	move $v0, $zero
+	j IsPrime_cleanup
+
+Label_8_end:
+	lw $t0,-8($fp)
+	add $t0,$t0,1
+	li $t1,32767
+	bge $t1,$t0,Label_13_overflow
+
+	li $t0,32767
+	j Label_14_end
+
+Label_13_overflow:
+	li $t1,65535
+	ble $t0,$t1,Label_14_end
+
+	li $t0,65535
+Label_14_end:
+	sw $t0,-8($fp)
+	j Label_4_check
+
+Label_5_end:
+	lw $t0,-4($fp)
+	add $t0,$t0,1
+	li $t1,32767
+	bge $t1,$t0,Label_15_overflow
+
+	li $t0,32767
+	j Label_16_end
+
+Label_15_overflow:
+	li $t1,65535
+	ble $t0,$t1,Label_16_end
+
+	li $t0,65535
+Label_16_end:
+	sw $t0,-4($fp)
+	j Label_0_check
+
+Label_1_end:
+	li $v0,1
+	j IsPrime_cleanup
+
+IsPrime_cleanup:
+	move $sp, $fp
+	lw $fp,0($sp)
+	add $sp,$sp,8
+	jr $ra
+
+PrintPrimes:
+	la $t0, _crt_funcname_PrintPrimes
+	sub $sp,$sp,4
+	sw $t0,0($sp)
+	sub $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp, $sp
+	sub $sp,$sp,12
+	lw $s1,0($sp)
+	lw $s0,4($sp)
+	move $t0, $a0
+	sw $t0,-4($fp)
+Label_17_check:
+	move $t0, $a1
+	add $t1,$t0,1
+	li $t0,32767
+	bge $t0,$t1,Label_19_overflow
+
+	li $t1,32767
+	j Label_20_end
+
+Label_19_overflow:
+	li $t0,65535
+	ble $t1,$t0,Label_20_end
+
+	li $t1,65535
+Label_20_end:
+	lw $t0,-4($fp)
+	slt $t1,$t0,$t1
+	li $t0,32767
+	bge $t0,$t1,Label_21_overflow
+
+	li $t1,32767
+	j Label_22_end
+
+Label_21_overflow:
+	li $t0,65535
+	ble $t1,$t0,Label_22_end
+
+	li $t1,65535
+Label_22_end:
+	beq $t1,$zero,Label_18_end
+
+	lw $t0,-4($fp)
+	move $s0, $t1
+	move $s1, $t0
+	sub $sp,$sp,4
+	sw $ra,0($sp)
+	move $a0, $t0
+	jal IsPrime
+
+	lw $ra,0($sp)
+	add $sp,$sp,4
+	move $t1, $s0
+	move $t0, $s1
+	move $t0, $v0
+	beq $t0,$zero,Label_23_end
+
+	lw $t0,-4($fp)
+	move $s0, $t1
+	move $s1, $t0
+	move $a0, $t0
+	li $v0,1
+	syscall
+	move $t1, $s0
+	move $t0, $s1
+Label_23_end:
+	lw $t0,-4($fp)
+	add $t1,$t0,1
+	li $t0,32767
+	bge $t0,$t1,Label_24_overflow
+
+	li $t1,32767
+	j Label_25_end
+
+Label_24_overflow:
+	li $t0,65535
+	ble $t1,$t0,Label_25_end
+
+	li $t1,65535
+Label_25_end:
+	sw $t1,-4($fp)
+	j Label_17_check
+
+Label_18_end:
+PrintPrimes_cleanup:
+	lw $s0,0($sp)
+	lw $s1,4($sp)
+	move $sp, $fp
+	lw $fp,0($sp)
+	add $sp,$sp,8
+	jr $ra
+
+_main:
+	la $t0, _crt_funcname__main
+	sub $sp,$sp,4
+	sw $t0,0($sp)
+	sub $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp, $sp
+	sub $sp,$sp,4
+	sw $ra,0($sp)
+	li $a0,2
+	li $a1,100
+	jal PrintPrimes
+
+	lw $ra,0($sp)
+	add $sp,$sp,4
+_main_cleanup:
+	move $sp, $fp
+	lw $fp,0($sp)
+	add $sp,$sp,8
+	jr $ra
+
+_crt_global_NilDeref_exit:
+	la $a0, crt_global_NilDeref_error_string
+	j _global_exit_label
+
+_crt_global_OutOfBoundsAccess_exit:
+	la $a0, crt_global_OutOfBoundsAccess_error_string
+	j _global_exit_label
+
+_crt_global_DivideByZero_exit:
+	la $a0, crt_global_DivideByZero_error_string
+	j _global_exit_label
+
+_global_exit_label:
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+PrintTrace:
+	sub $sp,$sp,4
+	sw $s0,0($sp)
+	sub $sp,$sp,4
+	sw $ra,0($sp)
+	move $s0, $fp
+_PrintTrace_loop:
+	beq $s0,$zero,_PrintTrace_endloop
+
+	lw $a0,4($s0)
+	li $v0,4
+	syscall
+	lw $s0,0($s0)
+	j _PrintTrace_loop
+
+_PrintTrace_endloop:
+	lw $ra,0($sp)
+	add $sp,$sp,4
+	lw $s0,0($sp)
+	add $sp,$sp,4
+	jr $ra
+
+_crt_strlen:
+	move $v0, $a0
+	move $t0, $zero
+_crt_strlen_loop:
+	lb $t0,0($v0)
+	beq $t0,$zero,_crt_strlen_end
+
+	add $v0,$v0,1
+	j _crt_strlen_loop
+
+_crt_strlen_end:
+	sub $v0,$v0,$a0
+	jr $ra
+
+_crt_join_strings:
+	sub $sp,$sp,4
+	sw $ra,0($sp)
+	sub $sp,$sp,4
+	sw $s0,0($sp)
+	sub $sp,$sp,4
+	sw $s1,0($sp)
+	sub $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp, $sp
+	sub $sp,$sp,4
+	sw $a0,0($sp)
+	sub $sp,$sp,4
+	sw $a1,0($sp)
+	jal _crt_strlen
+
+	move $s0, $v0
+	lw $a0,-8($fp)
+	jal _crt_strlen
+
+	move $s1, $v0
+	add $a0,$s1,$s0
+	li $v0,9
+	syscall
+	move $s0, $v0
+	lw $a0,-4($fp)
+_crt_join_strings_copy_loop1:
+	lb $t0,0($a0)
+	sb $t0,0($s0)
+
+	add $a0,$a0,1
+	add $s0,$s0,1
+	bne $t0,$zero,_crt_join_strings_copy_loop1
+
+	sub $s0,$s0,1
+	lw $a0,-8($fp)
+_crt_join_strings_copy_loop2:
+	lb $t0,0($a0)
+	sb $t0,0($s0)
+
+	add $a0,$a0,1
+	add $s0,$s0,1
+	bne $t0,$zero,_crt_join_strings_copy_loop2
+
+	add $sp,$sp,8
+	lw $fp,0($sp)
+	add $sp,$sp,12
+	lw $ra,0($sp)
+	add $sp,$sp,4
+	jr $ra
