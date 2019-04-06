@@ -1,0 +1,156 @@
+package AST;
+import TYPES.*;
+
+import java.util.function.BinaryOperator;
+
+public class AST_EXP_BINOP extends AST_EXP
+{
+	String OP;
+	private BinaryOperator<TYPE> semanter;
+	public AST_EXP left;
+	public AST_EXP right;
+
+	private static TYPE semantEq(TYPE t1, TYPE t2) {
+		if (t1 == null || t2 == null) {
+			return null;
+		}
+		// int or string? no problem!
+		if (t1 == t2 && (t1 == TYPE_STRING.getInstance() || t1 == TYPE_INT.getInstance()))
+			return TYPE_INT.getInstance();
+
+		//if first arg is class/array and second is nil
+		if((t1.is_nullable()) && (t2 == TYPE_NIL.getInstance())) return TYPE_INT.getInstance();
+
+		//if first arg is nil and second is class/array
+		if((t1 == TYPE_NIL.getInstance()) && (t2.is_nullable())) return TYPE_INT.getInstance();
+
+		if (semantMeArray(t1.asArray(), t2.asArray())) return TYPE_INT.getInstance();
+		//if first arg is class and second is class:
+		if (semantMeClasses(t1.asClass(), t2.asClass())) return TYPE_INT.getInstance();
+		return null;
+	}
+	private static TYPE semantIntOnly(TYPE t1, TYPE t2) {
+		if (t1 == TYPE_INT.getInstance() && t2 == TYPE_INT.getInstance()) {
+			return TYPE_INT.getInstance();
+		}
+		return null;
+	}
+	private static TYPE semantIntString(TYPE t1, TYPE t2) {
+		if (null != semantIntOnly(t1, t2))
+			return TYPE_INT.getInstance();
+		if (t1 == TYPE_STRING.getInstance() && t2 == TYPE_STRING.getInstance())
+			return TYPE_STRING.getInstance();
+
+		return null;
+	}
+
+	/******************/
+	/* CONSTRUCTOR(S) */
+	/******************/
+	public AST_EXP_BINOP(AST_EXP left,AST_EXP right, int OP)
+	{
+		/******************************/
+		/* SET A UNIQUE SERIAL NUMBER */
+		/******************************/
+		SerialNumber = AST_Node_Serial_Number.getFresh();
+
+		/***************************************/
+		/* PRINT CORRESPONDING DERIVATION RULE */
+		/***************************************/
+		System.out.print("====================== exp -> exp BINOP exp\n");
+
+		/*******************************/
+		/* COPY INPUT DATA NENBERS ... */
+		/*******************************/
+		this.left = left;
+		this.right = right;
+		if (OP == 0) {
+			this.OP = "+";
+			this.semanter = AST_EXP_BINOP::semantIntString;
+		}
+		if (OP == 1) {
+			this.OP = "-";
+			this.semanter = AST_EXP_BINOP::semantIntOnly;
+		}
+		if (OP == 2) {this.OP = "*";
+		this.semanter = AST_EXP_BINOP::semantIntOnly;}
+		if (OP == 3) {this.OP = ":";
+		this.semanter = AST_EXP_BINOP::semantIntOnly;}
+		if (OP == 4) {this.OP = ">";
+		this.semanter = AST_EXP_BINOP::semantIntOnly;}
+		if (OP == 5) {this.OP = "<";
+		this.semanter =AST_EXP_BINOP::semantIntOnly;}
+		if (OP == 6) {this.OP = "=";
+		this.semanter = AST_EXP_BINOP::semantEq;}
+	}
+
+	/*************************************************/
+	/* The printing message for a binop exp AST node */
+	/*************************************************/
+	public void PrintMe()
+	{
+		String sOP=OP;
+
+		/*************************************/
+		/* AST NODE TYPE = AST SUBSCRIPT VAR */
+		/*************************************/
+		System.out.print("AST NODE BINOP EXP\n");
+
+		/**************************************/
+		/* RECURSIVELY PRINT left + right ... */
+		/**************************************/
+		if (left != null) left.PrintMe();
+		if (right != null) right.PrintMe();
+
+		/***************************************/
+		/* PRINT Node to AST GRAPHVIZ DOT file */
+		/***************************************/
+		AST_GRAPHVIZ.getInstance().logNode(
+			SerialNumber,
+			String.format("BINOP(%s)", OP));
+
+		/****************************************/
+		/* PRINT Edges to AST GRAPHVIZ DOT file */
+		/****************************************/
+		if (left  != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,left.SerialNumber);
+		if (right != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,right.SerialNumber);
+	}
+
+	static private boolean semantMeArray(TYPE_ARRAY t1, TYPE_ARRAY t2) {
+		if ((t1 != null) && (null != t2)) {
+			//check both of arrays are of the same type
+			if(t1.name.equals(t2.name)) return true;
+		}
+		return false;
+	}
+
+	static private boolean semantMeClasses(TYPE_CLASS t1, TYPE_CLASS t2) {
+		if (t1 != null && t2 != null) {
+		//if same class, or
+		//first is son and second is father (or the other way)
+			return (t1.is_derived_from(t2) || t2.is_derived_from(t1)) ;
+		}
+		return false;
+	}
+
+	public TYPE SemantMe() throws AST_SEMANTIC_ERROR {
+		TYPE t1 = null;
+		TYPE t2 = null;
+
+		if (left  != null) t1 = left.SemantMe();
+		if (right != null) t2 = right.SemantMe();
+
+		if (t1 == null || t2 == null) {
+			return null;
+		}
+
+		TYPE out = semanter.apply(t1, t2);
+		if (out != null) {
+			return out;
+		}
+
+		//IF WE GOT HERE - ERROR!
+		reportSemanticError("Binop semntic error");
+		return null;
+	}
+}

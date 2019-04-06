@@ -1,0 +1,38 @@
+package AST;
+import TYPES.*;
+
+public abstract class AST_Node
+{
+	/*******************************************/
+	/* The serial number is for debug purposes */
+	/* In particular, it can help in creating  */
+	/* a graphviz dot format of the AST ...    */
+	/*******************************************/
+	public int SerialNumber;
+	protected int lineNumber;
+	
+	/***********************************************/
+	/* The default message for an unknown AST node */
+	/***********************************************/
+	public void PrintMe()
+	{
+		System.out.print("AST NODE UNKNOWN\n");
+	}
+	
+	public TYPE SemantMe() throws AST_SEMANTIC_ERROR {
+		return null;
+	}
+	public void setLineNumber(int num) {
+		this.lineNumber = num;
+	}
+	public int getLineNumber(){ return lineNumber + 1 ; }
+
+
+	protected void reportSemanticError() throws AST_SEMANTIC_ERROR { reportSemanticError(null);}
+
+	protected void reportSemanticError(String error) throws AST_SEMANTIC_ERROR {
+		if (error == null)
+			throw new AST_SEMANTIC_ERROR(this.getLineNumber());
+		throw new AST_SEMANTIC_ERROR(error, this.getLineNumber());
+	}
+}
